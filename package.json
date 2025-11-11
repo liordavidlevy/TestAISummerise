@@ -1,15 +1,23 @@
 {
   "name": "ai-docs-demo",
-  "version": "1.0.0",
-  "description": "Demo project for AI-generated code documentation summaries using a free Hugging Face API and GitHub Actions.",
+  "version": "1.2.0",
+  "description": "Demo CI/CD project that uses a free Hugging Face API to auto-generate documentation for NestJS-style code and commit it as a changelog.",
   "type": "module",
   "scripts": {
-    "generate-docs": "ts-node scripts/generate-doc-summary.ts"
+    "generate-docs": "ts-node scripts/generate-doc-summary.ts",
+    "build": "tsc",
+    "start": "ts-node src/main.ts"
   },
   "dependencies": {
+    "@nestjs/common": "^10.3.6",
+    "@nestjs/core": "^10.3.6",
+    "@nestjs/event-emitter": "^2.0.4",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.1",
     "node-fetch": "^3.3.2"
   },
   "devDependencies": {
+    "@types/node": "^20.12.12",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.5"
   },
@@ -19,11 +27,12 @@
   "keywords": [
     "ai",
     "huggingface",
-    "github-actions",
-    "ci-cd",
+    "nestjs",
     "typescript",
-    "nest",
-    "automation"
+    "automation",
+    "documentation",
+    "github-actions",
+    "ci-cd"
   ],
   "author": "Your Name",
   "license": "MIT"
