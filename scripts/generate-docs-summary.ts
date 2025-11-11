@@ -58,7 +58,7 @@ async function summarize() {
     process.exit(1);
   }
 
-  const data = await res.json();
+  const data: any = await res.json();
   const text = Array.isArray(data) ? data[0].generated_text : data.generated_text;
   return text?.trim() || "No summary generated.";
 }
