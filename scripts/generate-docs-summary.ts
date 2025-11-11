@@ -1,14 +1,11 @@
 import { execSync } from "child_process";
 import fs from "fs";
-import fetch from "node-fetch";
+import { GoogleGenAI } from "@google/genai";
 
 const CHANGELOG_FILE = "CHANGELOG_AI.md";
-const OPENAI_KEY = process.env.OPENAI_API_KEY;
 
-if (!OPENAI_KEY) {
-  console.error("❌ OPENAI_API_KEY not set. Add it to your environment or GitHub Actions secrets.");
-  process.exit(1);
-}
+// --- Initialize Google GenAI ---
+const ai = new GoogleGenAI({});
 
 // --- Gather all TS files ---
 const filesOutput = execSync("git ls-files '**/*.ts'", { encoding: "utf8" });
@@ -46,33 +43,16 @@ Be concise. If purpose is unclear, state so.
 ${context}
 `;
 
-// --- Call OpenAI API ---
+// --- Call Google GenAI ---
 async function summarize() {
-  console.log("🧠 Calling OpenAI GPT-3.5-Turbo...");
+  console.log("🧠 Calling Google Gemini GenAI...");
 
-  const res = await fetch("https://api.openai.com/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "Authorization": `Bearer ${OPENAI_KEY}`,
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      model: "gpt-3.5-turbo",
-      messages: [
-        { role: "system", content: "You are an expert technical writer documenting code." },
-        { role: "user", content: prompt }
-      ],
-      max_tokens: 400
-    })
+  const response = await ai.models.generateContent({
+    model: "gemini-2.5-flash", // or "gemini-2.1" if preferred
+    contents: prompt,
   });
 
-  if (!res.ok) {
-    console.error("OpenAI API error:", await res.text());
-    process.exit(1);
-  }
-
-  const data: any = await res.json();
-  const text = data.choices?.[0]?.message?.content || "No summary generated.";
+  const text = response.text || "No summary generated.";
   return text.trim();
 }
 
