@@ -7,6 +7,9 @@ on:
 jobs:
   ai-docs:
     runs-on: ubuntu-latest
+    permissions:
+      # Allow access to models API
+      models: read
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -15,7 +18,7 @@ jobs:
       - run: npm ci
       - name: Generate AI summary
         env:
-          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npm run generate-docs
       - name: Commit AI changelog
         run: |
