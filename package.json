@@ -1,0 +1,30 @@
+{
+  "name": "ai-docs-demo",
+  "version": "1.0.0",
+  "description": "Demo project for AI-generated code documentation summaries using a free Hugging Face API and GitHub Actions.",
+  "type": "module",
+  "scripts": {
+    "generate-docs": "ts-node scripts/generate-doc-summary.ts"
+  },
+  "dependencies": {
+    "node-fetch": "^3.3.2"
+  },
+  "devDependencies": {
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.5"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "ai",
+    "huggingface",
+    "github-actions",
+    "ci-cd",
+    "typescript",
+    "nest",
+    "automation"
+  ],
+  "author": "Your Name",
+  "license": "MIT"
+}
