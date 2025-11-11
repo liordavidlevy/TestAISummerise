@@ -2,9 +2,9 @@
   "name": "ai-docs-demo",
   "version": "1.2.0",
   "description": "Demo CI/CD project that uses a free Hugging Face API to auto-generate documentation for NestJS-style code and commit it as a changelog.",
-  "type": "module",
+  "type": "commonjs",
   "scripts": {
-    "generate-docs": "node --loader ts-node/esm scripts/generate-docs-summary.ts",
+    "generate-docs": "ts-node scripts/generate-docs-summary.ts",
     "build": "tsc",
     "start": "ts-node src/main.ts"
   },
