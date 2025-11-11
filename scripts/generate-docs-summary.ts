@@ -1,6 +1,17 @@
 import { execSync } from "child_process";
 import fs from "fs";
 
+// Hugging Face model name
+const MODEL = "mistralai/Mistral-7B-Instruct-v0.2";
+
+// Get Hugging Face token from environment
+const HF_TOKEN = process.env.HF_TOKEN;
+
+if (!HF_TOKEN) {
+  console.error("❌ HF_TOKEN is not set. Please add it to your environment or GitHub secrets.");
+  process.exit(1);
+}
+
 const CHANGELOG_FILE = "CHANGELOG_AI.md";
 
 // Always process all TypeScript files`
