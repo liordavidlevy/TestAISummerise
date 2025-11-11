@@ -3,6 +3,13 @@ import fs from "fs";
 import fetch from "node-fetch";
 
 const CHANGELOG_FILE = "CHANGELOG_AI.md";
+const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
+const MODEL_ID = "openai/gpt-4o-mini"; // GitHub-hosted model
+
+if (!GITHUB_TOKEN) {
+  console.error("❌ GITHUB_TOKEN not set. Add it to your environment or GitHub Actions secrets.");
+  process.exit(1);
+}
 
 // --- Gather all TS files ---
 const filesOutput = execSync("git ls-files '**/*.ts'", { encoding: "utf8" });
@@ -40,30 +47,38 @@ Be concise. If purpose is unclear, state so.
 ${context}
 `;
 
-// --- Use public free API (Pollinations) ---
+// --- Call GitHub Models API ---
 async function summarize() {
-  console.log("🧠 Calling free AI API...");
+  console.log("🧠 Calling GitHub Models API...");
 
-  const res = await fetch("https://text.pollinations.ai/prompt", {
+  const res = await fetch("https://api.github.com/models/inference/chat/completions", {
     method: "POST",
     headers: {
+      "Authorization": `Bearer ${GITHUB_TOKEN}`,
+      "Accept": "application/vnd.github+json",
       "Content-Type": "application/json"
     },
     body: JSON.stringify({
-      text: prompt
+      model: MODEL_ID,
+      messages: [
+        { role: "system", content: "You are an expert technical writer documenting code." },
+        { role: "user", content: prompt }
+      ],
+      max_tokens: 400
     })
   });
 
   if (!res.ok) {
-    console.error("Free AI API error:", await res.text());
+    console.error("GitHub Models API error:", await res.text());
     process.exit(1);
   }
 
   const data: any = await res.json();
-  const text = data.output || data.text || ""; // adapt depending on API response
-  return text.trim() || "No summary generated.";
+  const text = data.choices?.[0]?.message?.content || "No summary generated.";
+  return text.trim();
 }
 
+// --- Main ---
 async function run() {
   const summary = await summarize();
   const entry = `\n### Commit ${new Date().toISOString()}\n${summary}\n`;
