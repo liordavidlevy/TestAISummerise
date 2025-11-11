@@ -2,7 +2,7 @@ import { execSync } from "child_process";
 import fs from "fs";
 
 // Hugging Face model name
-const MODEL = "mistralai/Mistral-7B-Instruct-v0.2";
+const MODEL = "google/flan-t5-small";
 
 // Get Hugging Face token from environment
 const HF_TOKEN = process.env.HF_TOKEN;
@@ -61,14 +61,17 @@ ${context}
 async function summarize() {
   console.log("🧠 Calling Hugging Face model...");
   const res = await fetch("https://router.huggingface.co/hf-inference", {
+  method: "POST",
   headers: {
     "Authorization": `Bearer ${HF_TOKEN}`,
     "Content-Type": "application/json"
   },
-  method: "POST",
   body: JSON.stringify({
-    model: MODEL,
-    inputs: prompt
+    model: MODEL,        // full model ID, e.g., "google/flan-t5-small"
+    inputs: prompt,
+    parameters: {
+      max_new_tokens: 300
+    }
   })
 });
 
