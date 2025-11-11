@@ -3,11 +3,10 @@ import fs from "fs";
 import fetch from "node-fetch";
 
 const CHANGELOG_FILE = "CHANGELOG_AI.md";
-const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
-const MODEL_ID = "openai/gpt-4o-mini"; // GitHub-hosted model
+const OPENAI_KEY = process.env.OPENAI_API_KEY;
 
-if (!GITHUB_TOKEN) {
-  console.error("❌ GITHUB_TOKEN not set. Add it to your environment or GitHub Actions secrets.");
+if (!OPENAI_KEY) {
+  console.error("❌ OPENAI_API_KEY not set. Add it to your environment or GitHub Actions secrets.");
   process.exit(1);
 }
 
@@ -47,19 +46,18 @@ Be concise. If purpose is unclear, state so.
 ${context}
 `;
 
-// --- Call GitHub Models API ---
+// --- Call OpenAI API ---
 async function summarize() {
-  console.log("🧠 Calling GitHub Models API...");
+  console.log("🧠 Calling OpenAI GPT-3.5-Turbo...");
 
-  const res = await fetch("https://api.github.com/models/inference/chat/completions", {
+  const res = await fetch("https://api.openai.com/v1/chat/completions", {
     method: "POST",
     headers: {
-      "Authorization": `Bearer ${GITHUB_TOKEN}`,
-      "Accept": "application/vnd.github+json",
+      "Authorization": `Bearer ${OPENAI_KEY}`,
       "Content-Type": "application/json"
     },
     body: JSON.stringify({
-      model: MODEL_ID,
+      model: "gpt-3.5-turbo",
       messages: [
         { role: "system", content: "You are an expert technical writer documenting code." },
         { role: "user", content: prompt }
@@ -69,7 +67,7 @@ async function summarize() {
   });
 
   if (!res.ok) {
-    console.error("GitHub Models API error:", await res.text());
+    console.error("OpenAI API error:", await res.text());
     process.exit(1);
   }
 
