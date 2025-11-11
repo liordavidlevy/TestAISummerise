@@ -60,14 +60,17 @@ ${context}
 
 async function summarize() {
   console.log("🧠 Calling Hugging Face model...");
-  const res = await fetch(`https://api-inference.huggingface.co/models/${MODEL}`, {
-    headers: {
-      "Authorization": `Bearer ${HF_TOKEN}`,
-      "Content-Type": "application/json"
-    },
-    method: "POST",
-    body: JSON.stringify({ inputs: prompt })
-  });
+  const res = await fetch("https://router.huggingface.co/hf-inference", {
+  headers: {
+    "Authorization": `Bearer ${HF_TOKEN}`,
+    "Content-Type": "application/json"
+  },
+  method: "POST",
+  body: JSON.stringify({
+    model: MODEL,
+    inputs: prompt
+  })
+});
 
   if (!res.ok) {
     console.error("HuggingFace API error:", await res.text());
