@@ -1,0 +1,26 @@
+name: AI Docs Demo
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  ai-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm ci
+      - name: Generate AI summary
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: npm run generate-docs
+      - name: Commit AI changelog
+        run: |
+          git config user.name "AI Bot"
+          git config user.email "ai-bot@example.com"
+          git add CHANGELOG_AI.md
+          git commit -m "🤖 Update AI changelog [skip ci]" || echo "No changes"
+          git push
