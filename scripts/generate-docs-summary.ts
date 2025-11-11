@@ -1,27 +1,20 @@
 import { execSync } from "child_process";
 import fs from "fs";
-import fetch from "node-fetch";
 
-const HF_TOKEN = process.env.HF_TOKEN!;
-const MODEL = "mistralai/Mistral-7B-Instruct-v0.2";
 const CHANGELOG_FILE = "CHANGELOG_AI.md";
 
-console.log("🔍 Checking for changed TypeScript files...");
-
-let diffOutput = "";
-try {
-  diffOutput = execSync("git diff HEAD~1 --name-only", { encoding: "utf8" });
-} catch {
-  diffOutput = execSync("git ls-files src/*.ts", { encoding: "utf8" });
-}
-
+// Always process all TypeScript files`
+const diffOutput = execSync("git ls-files '**/*.ts'", { encoding: "utf8" });
 const files = diffOutput.split("\n").filter(f => f.endsWith(".ts"));
+
 if (!files.length) {
-  console.log("No changed TS files found.");
+  console.log("No TypeScript files found.");
   process.exit(0);
 }
 
-// --- Gather code context ---
+console.log(`Found ${files.length} TS files:`, files);
+
+// Gather code snippets
 let context = "";
 for (const file of files) {
   const content = fs.readFileSync(file, "utf8");
